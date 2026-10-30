@@ -167,20 +167,28 @@ select:focus-visible,textarea:focus-visible{
   text-transform:uppercase;color:#977d9e
 }
 
-/* Ubicación decorativa: evita el mapa incrustado que algunos navegadores bloquean */
+/* Ubicación: tarjeta elegante en malva y dorado */
 .map-card{
-  position:relative;overflow:hidden;max-width:760px;min-height:245px;margin:25px auto 0;
-  padding:35px 20px;border:1px solid var(--oro);background:linear-gradient(135deg,#fbf6fc,#eee1f2 55%,#f9f1fa);
-  box-shadow:0 12px 32px #62476d14
+  position:relative;isolation:isolate;overflow:hidden;max-width:760px;min-height:270px;margin:28px auto 0;
+  padding:42px 24px 38px;border:1px solid #c9a66a;border-radius:4px;
+  background:linear-gradient(135deg,#fffafd 0%,#f1e7f5 52%,#fbf6fc 100%);
+  box-shadow:0 16px 38px #62476d18,inset 0 0 0 6px #ffffff9c
 }
-.map-art{position:absolute;inset:0;width:100%;height:100%;opacity:.55;pointer-events:none}
-.map-pin{position:relative;z-index:1;font-size:2.7rem;color:#8b6b9c;text-shadow:0 3px 0 #e3c98d}
+.map-card:before,.map-card:after{content:"✦";position:absolute;z-index:1;color:#c5a15d;font-size:17px;pointer-events:none}
+.map-card:before{top:17px;left:20px}.map-card:after{right:20px;bottom:16px}
+.map-art{position:absolute;inset:0;width:100%;height:100%;opacity:.34;pointer-events:none;z-index:-1}
+.map-kicker{position:relative;z-index:1;margin:0 0 8px;font-size:.66rem;letter-spacing:3px;text-transform:uppercase;color:#a08350}
+.map-pin{position:relative;z-index:1;display:grid;place-items:center;width:54px;height:54px;margin:0 auto 10px;border:1px solid #c9a66a;border-radius:50%;background:#fffafc;color:#896a9b;font-size:1.65rem;box-shadow:0 5px 16px #765b8320}
+.map-card h3{position:relative;z-index:1;font:2.15rem/1.15 "Cormorant Garamond",serif;color:#60456f;margin:8px 0}
+.map-card .map-place{position:relative;z-index:1;margin:0;color:#796982;font:1rem "Montserrat",sans-serif;letter-spacing:.5px}
 .map-link{
-  display:inline-block;margin-top:18px;padding:13px 23px;color:#fff;background:#795d8b;
-  border:1px solid #c9a65d;text-decoration:none;letter-spacing:.4px;box-shadow:0 5px 14px #59406420
+  position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:center;gap:9px;
+  margin-top:22px;padding:13px 25px;color:#fff;background:linear-gradient(135deg,#8d72a0,#6f547f);
+  border:1px solid #c9a66a;border-radius:2px;text-decoration:none;letter-spacing:1px;font-size:.78rem;
+  text-transform:uppercase;box-shadow:0 7px 17px #59406424;transition:transform .2s,box-shadow .2s,background .2s
 }
-.map-link:hover{background:#624873}
-.map-hint{max-width:600px;margin:14px auto 0;font-size:.86rem;line-height:1.7;color:#796982}
+.map-link:hover{background:linear-gradient(135deg,#795d8b,#60456f);transform:translateY(-2px);box-shadow:0 10px 20px #59406430}
+@media(max-width:520px){.map-card{padding:36px 15px 32px;min-height:250px}.map-card h3{font-size:1.9rem}.map-link{padding:12px 17px;font-size:.7rem;letter-spacing:.7px}}
 .swatch{
   width:82px;height:82px;border-radius:50%;margin:20px auto;
   background:linear-gradient(145deg,#d5bfdf,#b49ac7 60%,#9479a9);
@@ -196,27 +204,18 @@ select:focus-visible,textarea:focus-visible{
   border:1px solid #ddc9e1;font-size:.8rem;line-height:1.7
 }
 .outfit-item span{display:block;font-size:1.7rem;margin-bottom:5px}
+.outfit-item .tuxedo-icon{display:block;width:38px;height:42px;margin:0 auto 5px}
 /* Los emojis generales combinan con la paleta morada; los de vestimenta van en negro. */
 .emoji{filter:hue-rotate(245deg) saturate(.78);display:inline-block}
 .confirm-heart{color:#c4a05c;display:inline-block;text-shadow:0 0 8px rgba(196,160,92,.35)}
 .outfit-list .emoji{filter:grayscale(1) brightness(.22)}
 
 /* Regalos */
-.gift-icon{font-size:3.3rem;line-height:1.5;color:#b48a48;filter:hue-rotate(275deg) saturate(.9)}
-.gift-note{font:1.65rem/1.5 "Cormorant Garamond",serif;color:#70547e}
-.envelope{
- width:92px;height:60px;margin:23px auto 16px;position:relative;
- background:#eadcf0;border:1px solid #bf9c5b;overflow:hidden
-}
-.envelope:before{
- content:"";position:absolute;top:-31px;left:13px;width:64px;height:64px;
- transform:rotate(45deg);background:#f8eff9;
- border-right:1px solid #bf9c5b;border-bottom:1px solid #bf9c5b
-}
-.envelope:after{
- content:"♡";position:absolute;left:0;right:0;top:21px;
- text-align:center;color:#b18b49;font-size:23px
-}
+.gift-emoji{font-size:4.4rem;line-height:1;margin:20px auto 22px;filter:hue-rotate(245deg) saturate(.8);display:block}
+.gift-note{font:1.65rem/1.5 "Cormorant Garamond",serif;color:#70547e;margin:12px auto 0}
+.envelope-emoji{position:relative;width:92px;height:76px;margin:18px auto 16px;display:flex;align-items:center;justify-content:center}
+.envelope-symbol{font-size:4.2rem;line-height:1;filter:hue-rotate(245deg) saturate(.55)}
+.envelope-seal{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);font-family:Georgia,serif;font-size:19px;line-height:1;color:#c4a05c;text-shadow:0 1px 2px #8b6a32,0 0 5px #f7e5ad;pointer-events:none}
 
 #confirmar{overflow:hidden;isolation:isolate}
 #confirmar .inner{position:relative;z-index:1}
@@ -396,12 +395,12 @@ select:focus-visible,textarea:focus-visible{
       </g>
       <g fill="#b49ac4" font-size="15" font-family="serif"><text x="20" y="220">TACNA</text><text x="610" y="220">✦ ✧ ✦</text></g>
     </svg>
-    <div class="map-pin">♧</div>
-    <h3 style="position:relative;z-index:1;font:2rem 'Cormorant Garamond',serif;color:#60456f;margin:8px 0">Quinta Flores</h3>
-    <p style="position:relative;z-index:1;margin:0;color:#796982">La Peña · Tacna, Perú</p>
-    <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Quinta+Flores+La+Pe%C3%B1a+Tacna+Peru" target="_blank" rel="noopener">📍 Abrir ubicación en Google Maps ↗</a>
+    <p class="map-kicker">El lugar de nuestra celebración</p>
+    <div class="map-pin" aria-hidden="true">⌖</div>
+    <h3>Quinta Flores</h3>
+    <p class="map-place">La Peña · Tacna, Perú</p>
+    <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Quinta+Flores+La+Pe%C3%B1a+Tacna+Peru" target="_blank" rel="noopener">📍 Ver ubicación y cómo llegar <span aria-hidden="true">↗</span></a>
   </div>
-  <p class="map-hint">El mapa incrustado estaba siendo bloqueado por el navegador. Este botón abre Google Maps directamente para consultar la ubicación y cómo llegar.</p>
  </div>
 </section>
 
@@ -421,7 +420,17 @@ select:focus-visible,textarea:focus-visible{
 
    <div class="outfit-list">
     <div class="outfit-item"><span class="emoji">👗</span>Vestido de gala</div>
-    <div class="outfit-item"><span class="emoji">🤵</span>Traje elegante</div>
+    <div class="outfit-item">
+     <svg class="tuxedo-icon" viewBox="0 0 48 52" role="img" aria-label="Terno negro">
+      <path d="M14 5 5 10 1 25l8 3 3-9v27h24V19l3 9 8-3-4-15-9-5-10 5z" fill="#111"/>
+      <path d="m18 6 6 5 6-5-2 12-4 5-4-5z" fill="#fff"/>
+      <path d="m18 6 6 5-4 10-6-9zM30 6l-6 5 4 10 6-9z" fill="#171717"/>
+      <path d="m21 12 3 2 3-2-1 5-2 2-2-2z" fill="#080808"/>
+      <path d="M21 23h6v20h-6z" fill="#171717"/>
+      <path d="M9 29h30" stroke="#333" stroke-width="1"/>
+     </svg>
+     Traje elegante
+    </div>
    </div>
 
    <div class="swatch"></div>
@@ -441,13 +450,15 @@ select:focus-visible,textarea:focus-visible{
   <div class="gold-line"></div>
 
   <div class="card" style="max-width:650px;margin:28px auto 0">
-   <div class="gift-icon emoji">🎁</div>
    <p style="max-width:500px;margin:0 auto">
      Lo más importante para mí es compartir este momento contigo.
-     Si deseas tener un detalle conmigo, agradeceré mucho tu cariño en un sobre.
+     Si deseas tener un detalle conmigo, agradeceré mucho tu cariño.
    </p>
-   <div class="envelope" aria-hidden="true"></div>
-   <div class="gift-note">Regalo en sobre <span class="emoji">💌</span></div>
+   <div class="gift-emoji" role="img" aria-label="Regalo en tonos lila" >🎁</div>
+   <div class="gift-note">Si lo prefieres, también puedes entregarme tu detalle en un sobre.</div>
+   <div class="envelope-emoji" role="img" aria-label="Sobre con sello de corazón dorado">
+    <span class="envelope-symbol">✉️</span><span class="envelope-seal">♥</span>
+   </div>
    <p class="form-note" style="margin-bottom:0">
      Gracias por ser parte de un recuerdo tan especial.
    </p>
