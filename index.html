@@ -256,6 +256,24 @@ select:focus-visible,textarea:focus-visible{
 @media(prefers-reduced-motion:reduce){
  *,*:before,*:after{animation-duration:.01ms!important;scroll-behavior:auto!important}
 }
+
+/* Formulario de confirmación conectado a Google Sheets */
+.rsvp-form{max-width:430px;margin:0 auto;text-align:left}
+.rsvp-label{display:block;margin:0 0 9px;color:#765d82;font-size:.72rem;letter-spacing:1.3px;text-transform:uppercase}
+.rsvp-input{display:block;width:100%;padding:14px 15px;border:1px solid #d6c4df;border-radius:2px;background:#fffdfd;color:#382b40;font-family:Montserrat,sans-serif;font-size:1rem;letter-spacing:1px;outline:none;transition:border-color .2s,box-shadow .2s}
+.rsvp-input:focus{border-color:#9b7aaf;box-shadow:0 0 0 3px #b49bc633}
+.rsvp-input::placeholder{color:#b4a6ba;letter-spacing:.5px}
+.rsvp-fieldset{border:0;padding:0;margin:23px 0 20px}
+.rsvp-fieldset legend{padding:0}
+.rsvp-option{display:flex;align-items:center;gap:11px;margin:11px 0;padding:12px 14px;border:1px solid #e3d6e8;background:#fffafd;color:#60496b;cursor:pointer;font-size:.9rem}
+.rsvp-option input{width:17px;height:17px;margin:0;accent-color:#8d72a0;flex:0 0 auto}
+.rsvp-submit{width:100%;font-family:Montserrat,sans-serif;font-size:.8rem}
+.rsvp-submit:disabled{opacity:.65;cursor:wait;transform:none}
+.rsvp-status{min-height:25px;margin:16px 0 0;text-align:center;font-size:.82rem}
+.rsvp-status.success{color:#55734f}
+.rsvp-status.error{color:#a34c58}
+@media(max-width:520px){.rsvp-form{max-width:100%}.rsvp-option{font-size:.85rem}}
+
 </style>
 </head>
 
@@ -466,7 +484,7 @@ select:focus-visible,textarea:focus-visible{
  </div>
 </section>
 
-<!-- CONFIRMACION POR WHATSAPP -->
+<!-- CONFIRMACION CON GOOGLE SHEETS -->
 <section class="soft" id="confirmar">
  <div class="final-lanterns" aria-hidden="true">
   <span class="final-lantern"></span><span class="final-lantern"></span>
@@ -478,14 +496,35 @@ select:focus-visible,textarea:focus-visible{
   <h2>Confirma tu asistencia <span class="confirm-heart" aria-hidden="true">♥</span></h2>
   <div class="gold-line"></div>
   <p style="max-width:560px;margin:0 auto 24px">
-    Para confirmar tu asistencia a mis quince, por favor escríbeme por WhatsApp al siguiente número. ¡Me hará mucha ilusión contar contigo! ✨
+    Me hará mucha ilusión contar contigo en esta noche tan especial. Ingresa el código personal de tu invitación y cuéntame si podrás acompañarme. ✨
   </p>
   <div class="card" style="max-width:610px;margin:30px auto 0;text-align:center">
    <div style="font-size:28px;margin-bottom:10px">💌</div>
-   <div class="small-label">Confirma a este número</div>
-   <p style="font:2rem 'Cormorant Garamond',serif;color:#60496b;margin:12px 0 22px">952 378 022</p>
-   <a class="gold-button" href="https://wa.me/51952378022?text=Hola%20Luciana%2C%20quiero%20confirmar%20mi%20asistencia%20a%20tus%20quince.%20%F0%9F%92%9C" target="_blank" rel="noopener noreferrer">Confirmar por WhatsApp ♡</a>
-   <p class="form-note" style="margin:18px 0 0">Gracias por tomarte un momento para confirmar. 💜</p>
+   <div class="small-label">Confirmación de asistencia</div>
+   <p style="max-width:440px;margin:12px auto 22px">Escribe el código que recibiste en tu invitación y selecciona tu respuesta.</p>
+
+   <form id="rsvpForm" class="rsvp-form">
+    <label class="rsvp-label" for="guestCode">Código de invitación</label>
+    <input class="rsvp-input" id="guestCode" name="codigo" type="text" maxlength="30"
+      placeholder="Ej. XV-003" autocomplete="off" autocapitalize="characters" required>
+
+    <fieldset class="rsvp-fieldset">
+     <legend class="rsvp-label">¿Podrás acompañarme?</legend>
+     <label class="rsvp-option">
+      <input type="radio" name="respuesta" value="si" required>
+      <span>Sí, asistiré ♡</span>
+     </label>
+     <label class="rsvp-option">
+      <input type="radio" name="respuesta" value="no" required>
+      <span>No podré asistir</span>
+     </label>
+    </fieldset>
+
+    <button class="gold-button rsvp-submit" id="rsvpSubmit" type="submit">Enviar confirmación ♡</button>
+    <p id="rsvpStatus" class="form-note rsvp-status" role="status" aria-live="polite">
+      Tu respuesta se registrará de manera automática.
+    </p>
+   </form>
   </div>
  </div>
 </section>
@@ -548,6 +587,96 @@ function updateCountdown(){
 
 updateCountdown();
 setInterval(updateCountdown,1000);
+
+
+/* Confirmación de asistencia: envío seguro mediante JSONP a Google Apps Script */
+const RSVP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6QC--pj8pWMpho71fT27MHZyhXQkR88Z9TFkoUqIDUTZ_lzemmKvpGcereIRAwqiB/exec";
+const rsvpForm = document.getElementById("rsvpForm");
+const rsvpStatus = document.getElementById("rsvpStatus");
+const rsvpSubmit = document.getElementById("rsvpSubmit");
+
+function mostrarEstadoRSVP(mensaje, tipo) {
+  rsvpStatus.textContent = mensaje;
+  rsvpStatus.classList.remove("success", "error");
+  if (tipo) rsvpStatus.classList.add(tipo);
+}
+
+window.handleXVResponse = function(datos) {
+  if (window.xvRequestScript) {
+    window.xvRequestScript.remove();
+    window.xvRequestScript = null;
+  }
+  if (window.xvRequestTimeout) {
+    clearTimeout(window.xvRequestTimeout);
+    window.xvRequestTimeout = null;
+  }
+
+  rsvpSubmit.disabled = false;
+  rsvpSubmit.textContent = "Enviar confirmación ♡";
+
+  if (datos && datos.ok) {
+    mostrarEstadoRSVP(datos.mensaje || "¡Tu respuesta fue registrada correctamente!", "success");
+    rsvpForm.reset();
+    rsvpSubmit.textContent = "Respuesta enviada ♡";
+    rsvpSubmit.disabled = true;
+  } else {
+    mostrarEstadoRSVP((datos && datos.mensaje) || "No se pudo registrar tu respuesta. Inténtalo nuevamente.", "error");
+  }
+};
+
+rsvpForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const codigo = document.getElementById("guestCode").value.trim().toUpperCase();
+  const respuestaSeleccionada = rsvpForm.querySelector('input[name="respuesta"]:checked');
+
+  if (!codigo || !respuestaSeleccionada) {
+    mostrarEstadoRSVP("Escribe tu código y selecciona una respuesta.", "error");
+    return;
+  }
+
+  if (window.xvRequestScript) window.xvRequestScript.remove();
+  if (window.xvRequestTimeout) clearTimeout(window.xvRequestTimeout);
+
+  rsvpSubmit.disabled = true;
+  rsvpSubmit.textContent = "Enviando...";
+  mostrarEstadoRSVP("Estamos registrando tu respuesta. Un momento, por favor.", "");
+
+  const parametros = new URLSearchParams({
+    codigo: codigo,
+    respuesta: respuestaSeleccionada.value,
+    callback: "handleXVResponse"
+  });
+
+  const script = document.createElement("script");
+  window.xvRequestScript = script;
+  script.src = RSVP_SCRIPT_URL + "?" + parametros.toString();
+  script.onerror = function() {
+    if (window.xvRequestScript) {
+      window.xvRequestScript.remove();
+      window.xvRequestScript = null;
+    }
+    if (window.xvRequestTimeout) {
+      clearTimeout(window.xvRequestTimeout);
+      window.xvRequestTimeout = null;
+    }
+    rsvpSubmit.disabled = false;
+    rsvpSubmit.textContent = "Enviar confirmación ♡";
+    mostrarEstadoRSVP("No pudimos conectar con el registro. Revisa tu conexión e inténtalo otra vez.", "error");
+  };
+  document.body.appendChild(script);
+
+  window.xvRequestTimeout = setTimeout(function() {
+    if (window.xvRequestScript) {
+      window.xvRequestScript.remove();
+      window.xvRequestScript = null;
+    }
+    rsvpSubmit.disabled = false;
+    rsvpSubmit.textContent = "Enviar confirmación ♡";
+    mostrarEstadoRSVP("La respuesta está tardando demasiado. Inténtalo nuevamente.", "error");
+    window.xvRequestTimeout = null;
+  }, 20000);
+});
 
 
 </script>
